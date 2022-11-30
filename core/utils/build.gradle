@@ -1,0 +1,10 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+ext {
+    moduleId = 'com.utsman.tokocot.utils'
+}
+apply from: "$rootDir/gradle/script/config.gradle"
+apply from: "$rootDir/gradle/script/core.lib.gradle"

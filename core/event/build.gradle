@@ -1,0 +1,14 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+    id 'kotlin-kapt'
+}
+
+ext {
+    moduleId = 'com.utsman.tokocot.event'
+}
+apply from: "$rootDir/gradle/script/config.gradle"
+
+dependencies {
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+}

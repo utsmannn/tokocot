@@ -1,0 +1,25 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+ext {
+    moduleId = 'com.utsman.tokocot'
+}
+
+android {
+    defaultConfig {
+        applicationId moduleId
+        versionCode 1
+        versionName "1.0.0"
+    }
+}
+
+apply from: "$rootDir/gradle/script/config.gradle"
+apply from: "$rootDir/gradle/script/core.lib.gradle"
+apply from: "$rootDir/gradle/script/module.core.gradle"
+apply from: "$rootDir/gradle/script/module.feature.gradle"
+
+dependencies {
+
+}

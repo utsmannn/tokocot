@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "Tokocot"
+include ':app'
+include ':core:network'
+include ':core:utils'
+include ':feature:productlist'
+include ':feature:productdetail'
+include ':core:local'
+include ':core:event'

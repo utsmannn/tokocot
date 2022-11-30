@@ -1,0 +1,16 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+ext {
+    moduleId = 'com.utsman.tokocot.productdetail'
+}
+apply from: "$rootDir/gradle/script/config.gradle"
+apply from: "$rootDir/gradle/script/core.lib.gradle"
+
+dependencies {
+    implementation project(":core:local")
+    implementation project(":core:network")
+    implementation project(":core:utils")
+}
