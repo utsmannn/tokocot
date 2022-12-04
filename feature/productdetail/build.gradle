@@ -13,4 +13,6 @@ dependencies {
     implementation project(":core:local")
     implementation project(":core:network")
     implementation project(":core:utils")
+
+    // TODO("Add compose dependencies")
 }

@@ -1,10 +1,8 @@
 package com.utsman.tokocot.productlist
 
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.utsman.tokocot.utils.BaseViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -17,20 +15,20 @@ class ProductListViewModel(
     private val repository: ProductListRepository
 ) : ViewModel() {
 
-    private val errorHandler = CoroutineExceptionHandler { coroutineContext, throwable ->
+    private val productListErrorHandler = CoroutineExceptionHandler { _, throwable ->
         repository.postErrorProductList(throwable)
     }
 
-    private val safeScope: CoroutineScope
-        get() = viewModelScope + errorHandler
+    private val productListSafeScope: CoroutineScope
+        get() = viewModelScope + productListErrorHandler
 
     val productList
-        get() = repository.productList.asLiveData(safeScope.coroutineContext)
+        get() = repository.productList.asLiveData(productListSafeScope.coroutineContext)
 
     val productListFlow
         get() = repository.productList
 
-    fun getProductList(page: Int) = safeScope.launch {
+    fun getProductList(page: Int) = productListSafeScope.launch {
         repository.getProductList(page)
     }
 

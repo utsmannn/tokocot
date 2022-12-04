@@ -1,9 +1,9 @@
 package com.utsman.tokocot.event
 
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.flow
 import retrofit2.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.suspendCoroutine
 
 @Suppress("FunctionName")
 fun <T> DefaultEventFlow(): MutableStateFlow<StateEvent<T>> =
@@ -66,23 +66,15 @@ inline fun <reified T> StateEvent<T>.doOnEmpty(failure: () -> Unit): StateEvent<
     return this
 }
 
-inline fun <reified T> Response<T>.fetch(): Flow<StateEvent<T>> {
-    return flow {
+suspend inline fun <reified T>Response<T>.reduce(): StateEvent<T> {
+    return suspendCoroutine { task ->
         val emitData: StateEvent<T> = try {
             val body = body()
             if (isSuccessful && body != null) {
-                try {
-                    if (body is List<*>) {
-                        if (body.isEmpty()) {
-                            StateEvent.Empty()
-                        } else {
-                            StateEvent.Success(body)
-                        }
-                    } else {
-                        StateEvent.Success(body)
-                    }
-                } catch (e: Throwable) {
-                    StateEvent.Failure(e)
+                if (body is List<*> && body.isEmpty()) {
+                    StateEvent.Empty()
+                } else {
+                    StateEvent.Success(body)
                 }
             } else {
                 val throwable = StateApiException(message(), code())
@@ -91,6 +83,7 @@ inline fun <reified T> Response<T>.fetch(): Flow<StateEvent<T>> {
         } catch (e: Throwable) {
             StateEvent.Failure(e)
         }
-        emit(emitData)
+
+        task.resume(emitData)
     }
 }

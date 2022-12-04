@@ -26,20 +26,35 @@ class ProductListActivity : BaseActivity<ActivityProductListBinding>() {
         binding.rvProduct.layoutManager = GridLayoutManager(this, 2)
         binding.rvProduct.adapter = adapter
 
-        viewModel.getProductList(1)
         viewModel.productList.observe(this) { state ->
             binding.progressCircular.isVisible = state is StateEvent.Loading
 
-            state.doOnSuccess {
-                adapter.items = it
-            }.doOnFailure {
-                // render failure
-            }.doOnEmpty {
-                // render empty
-            }.doOnIdle {
-                // render on idle
-            }
+                state
+                .doOnIdle {
+                    viewModel.getProductList(1)
+                }
+                .doOnSuccess { data ->
+                    renderSuccess(data)
+                }
+                .doOnFailure { throwable ->
+                    renderFailure(throwable)
+                }
+                .doOnEmpty {
+                    renderEmpty()
+                }
         }
+    }
+
+    private fun renderSuccess(data: List<Product>) {
+        adapter.items = data
+    }
+
+    private fun renderFailure(throwable: Throwable) {
+        TODO("Render failure view")
+    }
+
+    private fun renderEmpty() {
+        TODO("Render empty view")
     }
 
     class ProductListAdapter : RecyclerView.Adapter<ProductListViewHolder>() {

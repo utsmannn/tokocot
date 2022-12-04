@@ -1,13 +1,9 @@
 package com.utsman.tokocot.productlist
 
-import com.utsman.tokocot.event.DefaultEventFlow
-import com.utsman.tokocot.event.StateEvent
-import com.utsman.tokocot.event.fetch
-import com.utsman.tokocot.event.map
+import com.utsman.tokocot.event.*
 import com.utsman.tokocot.network.ProductListResponse
 import com.utsman.tokocot.network.WebServices
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.*
 import org.koin.core.module.Module
 import org.koin.dsl.module
 
@@ -16,18 +12,23 @@ interface ProductListRepository {
     suspend fun getProductList(page: Int)
     fun postErrorProductList(throwable: Throwable)
 
-    private class Impl(private val webServices: WebServices) : ProductListRepository {
-        private val _productList = DefaultEventFlow<List<Product>>()
+    private class Impl(
+        private val webServices: WebServices
+    ) : ProductListRepository {
+
+        private val _productList: MutableStateFlow<StateEvent<List<Product>>>
+            get() = MutableStateFlow(StateEvent.Idle())
+
         override val productList: StateFlow<StateEvent<List<Product>>>
             get() = _productList
 
         override suspend fun getProductList(page: Int) {
             _productList.value = StateEvent.Loading()
-            webServices.getProduct(page = page).fetch()
-                .map { stateResponse ->
-                    stateResponse.map { Mapper.mapResponseToProductList(it) }
-                }
-                .collect(_productList)
+            webServices.getProduct(page = page).reduce().map {
+                Mapper.mapResponseToProductList(it)
+            }.also { result ->
+                _productList.value = result
+            }
         }
 
         override fun postErrorProductList(throwable: Throwable) {
